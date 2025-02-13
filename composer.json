@@ -1,5 +1,5 @@
 {
-    "name": "putheakhem/otp",
+    "name": "putheakhem/laravel-otp",
     "description": "A simple OTP generator for Laravel",
     "keywords": ["php", "laravel", "otp"],
     "license": "MIT",
