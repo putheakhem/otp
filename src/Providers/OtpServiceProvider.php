@@ -1,6 +1,6 @@
 <?php
 
-namespace Putheakhem\Otp\Providers;
+namespace PutheaKhem\Otp\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use PutheaKhem\Otp\Services\OtpService;
@@ -9,7 +9,7 @@ class OtpServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton('otp', fn(): \PutheaKhem\Otp\Services\OtpService => new OtpService);
+        $this->app->singleton('otp', fn (): \PutheaKhem\Otp\Services\OtpService => new OtpService);
     }
 
     public function boot(): void
