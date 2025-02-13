@@ -29,7 +29,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Putheakhem\\Otp\\Providers\\OtpServiceProvider"
+                "PutheaKhem\\Otp\\Providers\\OtpServiceProvider"
             ],
             "aliases": {
                 "Otp": "Putheakhem\\Otp\\Facades\\Otp"
