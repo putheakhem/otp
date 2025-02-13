@@ -1,47 +1,126 @@
-<p align="center">
-    <img src="https://raw.githubusercontent.com/nunomaduro/skeleton-php/master/docs/example.png" height="300" alt="Skeleton Php">
-    <p align="center">
-        <a href="https://github.com/nunomaduro/skeleton-php/actions"><img alt="GitHub Workflow Status (master)" src="https://github.com/nunomaduro/skeleton-php/actions/workflows/tests.yml/badge.svg"></a>
-        <a href="https://packagist.org/packages/nunomaduro/skeleton-php"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/nunomaduro/skeleton-php"></a>
-        <a href="https://packagist.org/packages/nunomaduro/skeleton-php"><img alt="Latest Version" src="https://img.shields.io/packagist/v/nunomaduro/skeleton-php"></a>
-        <a href="https://packagist.org/packages/nunomaduro/skeleton-php"><img alt="License" src="https://img.shields.io/packagist/l/nunomaduro/skeleton-php"></a>
-    </p>
-</p>
+# 🚀 Laravel OTP Package - `putheakhem/otp`
 
-------
-This package provides a wonderful **PHP Skeleton** to start building your next package idea.
+[![Tests](https://github.com/putheakhem/otp/actions/workflows/tests.yml/badge.svg)](https://github.com/putheakhem/otp/actions/workflows/tests.yml)
 
-> **Requires [PHP 8.3+](https://php.net/releases/)**
+A Laravel package for generating, validating, and managing One-Time Passwords (OTP) with security features.
+## 📌 Features
+✅ **Rate-limited OTP generation**  
+✅ **Configurable expiration times**  
+✅ **Invalidate OTP after first use**  
+✅ **Lock OTP to user session**  
+✅ **Invalidate OTP after too many failed attempts**  
+✅ **View detailed error messages**  
+✅ **Customizable mail template**  
+✅ **Auditable logs for security**
 
-⚡️ Create your package using [Composer](https://getcomposer.org):
+---
 
+## 🔧 Installation
+
+### **1. Install via Composer**
 ```bash
-composer create-project nunomaduro/skeleton-php --prefer-source PackageName
+composer require putheakhem/otp
 ```
 
-🧹 Keep a modern codebase with **Pint**:
+### **2. Publish the configuration file**
 ```bash
-composer lint
+
+php artisan vendor:publish --provider="Putheakhem\Otp\OtpServiceProvider" --tag="config"
+```
+this will publish the `otp.php` configuration file to your `config` directory.
+
+### **3. Run the migrations**
+```bash
+
+php artisan migrate
 ```
 
-✅ Run refactors using **Rector**
-```bash
-composer refacto
+### **4. Configuration** 
+Modify `config/otp.php` to adjust settings:
+
+```shell
+return [
+    'length' => 6, // OTP length
+    'expires_in' => 300, // OTP expiration time in seconds (5 minutes)
+    'max_attempts' => 5, // Maximum failed attempts before invalidation
+    'lock_to_session' => true, // OTP tied to user session
+    'mail_template' => 'otp::emails.otp', // Email template for OTP
+    'logging_enabled' => true, // Enable OTP logging
+];
 ```
 
-⚗️ Run static analysis using **PHPStan**:
-```bash
-composer test:types
+## 🚀 Usage
+
+### **1. Generate an OTP**
+```php
+use Putheakhem\Otp\Facades\Otp;
+
+$otp = Otp::generate('user@gmail.com');
+
+dd($otp);
+``` 
+output:
+```shell
+PutheaKhem\Otp\Models\Otp {#123
+  id: 1,
+  identifier: "user@example.com",
+  otp: "123456",
+  used: false,
+  attempts: 0,
+  expires_at: "2025-02-10 12:00:00"
+}
 ```
 
-✅ Run unit tests using **PEST**
-```bash
-composer test:unit
+### **2. Validate an OTP**
+
+```php
+use Putheakhem\Otp\Facades\Otp;
+
+$response = Otp::validate('user@example.com', '123456');
+
+dd($response);
 ```
 
-🚀 Run the entire test suite:
-```bash
-composer test
+✅ Expected Output: Success
+```json
+{
+    "status": true,
+    "message": "OTP verified successfully."
+}
 ```
 
-**Skeleton PHP** was created by **[Nuno Maduro](https://twitter.com/enunomaduro)** under the **[MIT license](https://opensource.org/licenses/MIT)**.
+❌ Failure (Invalid OTP)
+```json
+{
+    "status": false,
+    "message": "Invalid OTP."
+}
+```
+
+❌ Failure (Expired OTP)
+```json
+{
+    "status": false,
+    "message": "OTP expired or invalid."
+}
+```
+
+### **3. Email Customization**
+
+Customize the email template at
+```shell
+resources/views/vendor/otp/emails/otp.blade.php
+```
+Example:
+```blade
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OTP Verification</title>
+</head>
+<body>
+    <p>Your OTP is: <strong>{{ $otp }}</strong></p>
+    <p>This OTP is valid for {{ config('otp.expires_in') / 60 }} minutes.</p>
+</body>
+</html>
+```
