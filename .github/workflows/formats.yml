@@ -1,0 +1,30 @@
+name: Release to Packagist
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install Dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Run Tests
+        run: php artisan test
+
+      - name: Trigger Packagist Update
+        run: |
+          curl -XPOST -H 'content-type:application/json' \
+          -d '{"repository":{"url":"https://github.com/putheakhem/otp"}}' \
+          https://packagist.org/api/update-package?username=your-username&api_token=${{ secrets.PACKAGIST_TOKEN }}
