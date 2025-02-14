@@ -1,44 +1,47 @@
-# 🚀 Laravel OTP Package - `putheakhem/otp`
+# Laravel OTP Package - `putheakhem/otp`
 
 [![Tests](https://github.com/putheakhem/otp/actions/workflows/tests.yml/badge.svg)](https://github.com/putheakhem/otp/actions/workflows/tests.yml)
 
 A Laravel package for generating, validating, and managing One-Time Passwords (OTP) with security features.
+
+---
+
 ## 📌 Features
-✅ **Rate-limited OTP generation**  
-✅ **Configurable expiration times**  
-✅ **Invalidate OTP after first use**  
-✅ **Lock OTP to user session**  
-✅ **Invalidate OTP after too many failed attempts**  
-✅ **View detailed error messages**  
-✅ **Customizable mail template**  
-✅ **Auditable logs for security**
+- ✅ Rate-limited OTP generation
+- ✅ Configurable expiration times
+- ✅ Invalidate OTP after first use
+- ✅ Lock OTP to user session
+- ✅ Invalidate OTP after too many failed attempts
+- ✅ View detailed error messages
+- ✅ Customizable mail template
+- ✅ Auditable logs for security
 
 ---
 
 ## 🔧 Installation
 
-### **1. Install via Composer**
-```bash
+### 1️⃣ Install via Composer
+```sh
 composer require putheakhem/otp
 ```
 
-### **2. Publish the configuration file**
-```bash
-
-php artisan vendor:publish --provider="Putheakhem\Otp\OtpServiceProvider" --tag="config"
-```
-this will publish the `otp.php` configuration file to your `config` directory.
-
-### **3. Run the migrations**
-```bash
-
+### 2️⃣ Publish Configuration & Migrations
+```sh
+php artisan vendor:publish --provider="PutheaKhem\Otp\Providers\OtpServiceProvider"
 php artisan migrate
 ```
 
-### **4. Configuration** 
+This will create:
+- A **config file** at `config/otp.php`
+- A **database table** `otps`
+
+---
+
+### **3 Configuration**
+
 Modify `config/otp.php` to adjust settings:
 
-```shell
+```php
 return [
     'length' => 6, // OTP length
     'expires_in' => 300, // OTP expiration time in seconds (5 minutes)
@@ -49,18 +52,21 @@ return [
 ];
 ```
 
-## 🚀 Usage
+---
 
-### **1. Generate an OTP**
+## 🔥 Usage
+
+### **Generate an OTP**
 ```php
-use Putheakhem\Otp\Facades\Otp;
+use PutheaKhem\Otp\Facades\Otp;
 
-$otp = Otp::generate('user@gmail.com');
+$otp = Otp::generate('user@example.com');
 
 dd($otp);
-``` 
-output:
-```shell
+```
+
+📌 **Output Example:**
+```php
 PutheaKhem\Otp\Models\Otp {#123
   id: 1,
   identifier: "user@example.com",
@@ -71,17 +77,17 @@ PutheaKhem\Otp\Models\Otp {#123
 }
 ```
 
-### **2. Validate an OTP**
+---
 
+### **Validate an OTP**
 ```php
-use Putheakhem\Otp\Facades\Otp;
-
 $response = Otp::validate('user@example.com', '123456');
 
 dd($response);
 ```
 
-✅ Expected Output: Success
+📌 **Expected Output:**
+✅ **Success**
 ```json
 {
     "status": true,
@@ -89,7 +95,7 @@ dd($response);
 }
 ```
 
-❌ Failure (Invalid OTP)
+❌ **Failure (Invalid OTP)**
 ```json
 {
     "status": false,
@@ -97,7 +103,7 @@ dd($response);
 }
 ```
 
-❌ Failure (Expired OTP)
+❌ **Failure (Expired OTP)**
 ```json
 {
     "status": false,
@@ -105,13 +111,16 @@ dd($response);
 }
 ```
 
-### **3. Email Customization**
+---
 
-Customize the email template at
-```shell
+## 📩 Email Customization
+Customize the email template at:
+```
 resources/views/vendor/otp/emails/otp.blade.php
 ```
+
 Example:
+
 ```blade
 <!DOCTYPE html>
 <html>
@@ -124,3 +133,54 @@ Example:
 </body>
 </html>
 ```
+
+---
+
+## 🔬 Testing
+
+### **Run All Tests**
+```sh
+php artisan test
+```
+
+📌 **Expected Output:**
+```
+✔ can generate OTP
+✔ can validate OTP
+✔ OTP invalid after expiry
+✔ OTP fails after too many attempts
+✔ OTP logs events
+✔ Emails are sent correctly
+✔ OTP is locked to session
+```
+
+---
+
+## 📢 Contributing
+1. Fork the repository
+2. Clone the repo:
+   ```sh
+   git clone https://github.com/putheakhem/otp.git
+   ```
+3. Create a new branch:
+   ```sh
+   git checkout -b feature-branch
+   ```
+4. Commit changes & push:
+   ```sh
+   git commit -m "Added new feature"
+   git push origin feature-branch
+   ```
+5. Submit a **Pull Request** 🚀
+
+---
+
+## 🏆 Credits
+Developed by **[Puthea Khem](https://github.com/putheakhem)**.  
+Special thanks to the **Laravel community**! 🎉
+
+---
+
+## 📜 License
+This package is open-source and licensed under the **MIT License**.
+
